@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ScrollView, Image, Text, StyleSheet, TouchableOpacity, TextInput, Button,KeyboardAvoidingView,} from 'react-native';
+import { View, ScrollView, Image, Text, StyleSheet, TouchableOpacity, TextInput, Button, KeyboardAvoidingView, } from 'react-native';
 import firebase from '../../config/Firebase';
 import { StackActions, NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux'
@@ -30,6 +30,49 @@ class Aucationeer extends React.Component {
         const { currentUser } = this.props
         console.log(currentUser)
     }
+    submit() {
+        const { name,decscrition,Bid,category,StartTime,EndTime,image} = this.state
+        const { currentUser } = this.props
+        const UID = currentUser.UID
+        if (!name ) {
+            alert('Please add name')
+        } else if (!decscrition && decscrition.length < 10) {
+            alert('Describe briefly ')
+        } else if (!category) {
+            alert('Please select Category')
+        } else if (moment(StartTime) <= moment(Date.now())) {
+            alert('select atlest 10 mint to the current time')
+        } else if (!EndTime) {
+            alert('Please Select Ending Time')
+        } else if (EndTime <= StartTime) {
+            alert('Please select Correct Ending Time')
+        } else if (!Bid) {
+            alert('Please Add Minimum Price')
+        } 
+        else if (!image) {
+            alert('Please Select Image')
+        }else {
+            alert('Submitted')
+            const obj = {
+                UID:UID,
+                name,
+                decscrition,
+                Bid,
+                category,
+                StartTime,
+                EndTime,
+                image,
+            }
+            firebase.database().ref('/Aucation/' + UID).push(obj)
+            this.props.navigation.navigate('Home')
+            console.log(obj)
+        }
+    }
+
+    Home() {
+        this.props.navigation.navigate('Home')
+    }
+
     //start time
     _showDateTimePickerStart = () => this.setState({ isDateTimePickerVisibleStart: true });
     _hideDateTimePickerStart = () => this.setState({ isDateTimePickerVisibleStart: false });
@@ -110,142 +153,148 @@ class Aucationeer extends React.Component {
         }
         ];
         return (
-            <View>
-                <View style={styles.statusBar} />
-                <ScrollView styel={{ flex: 1 }}>
-                <KeyboardAvoidingView style={{ flex: 1 }} behavior='position' enabled>
-                    <View>
-                        <Header
-                            containerStyle={{
-                                backgroundColor: '#075e54',
-                                justifyContent: 'space-around',
-                                height: 60
-                            }}
-                            leftComponent={{ icon: 'home', color: '#fff', onPress: () => this.map() }}
-                            centerComponent={{ text: "Aucationeer", style: { color: '#fff', fontSize: 20 } }}
-                        />
+            <View style={{ flex: 1 }}>
+                <Header
+                    containerStyle={{
+                        backgroundColor: '#075e54',
+                        justifyContent: 'space-around',
+                    }}
+                    leftComponent={{ icon: 'home', color: '#fff', onPress: () => this.Home() }}
+                    centerComponent={{ text: "Creat Auction", style: { color: '#fff', fontSize: 20 } }}
+                />
+                <ScrollView>
+                    <KeyboardAvoidingView enabled>
                         <View style={styles.MainDiv}>
-
-                            <View>
-                                <View style={styles.headings}><Text style={styles.HeadingText}>Product Name</Text></View>
-                                <View style={styles.InputDiv}>
-                                    <TextInput
-                                        style={styles.InputFields}
-                                        onChangeText={(name) => this.setState({ name })}
-                                        placeholder={'Product Name'}
-                                        value={this.state.text}
-                                    />
-                                </View>
-                            </View>
-
-                            <View>
-                                <View style={styles.headings}><Text style={styles.HeadingText}>Product Description</Text></View>
-                                <View style={styles.InputDiv}>
-                                    <TextInput
-                                        style={styles.InputFields}
-                                        multiline={true}
-                                        onChangeText={(decscrition) => this.setState({ decscrition })}
-                                        placeholder='Product decscrition'
-                                        value={this.state.text}
-                                    />
-                                </View>
-                            </View>
-
-                            <View>
-                                <View style={styles.headings}><Text style={styles.HeadingText}>Chose your product category</Text></View>
-                                <View style={styles.InputDiv}>
-                                    <Dropdown
-                                        label='Select category'
-                                        data={Category}
-                                        // baseColor={'#ccff33'}
-                                        // textColor={'#ffff99'}
-                                        // itemColor={'#00e6e6'}
-                                        selectedItemColor={'#ff00aa'}
-                                        onChangeText={e => this.setState({ category: e })}
-                                    />
-                                </View>
-                            </View>
-
-                            <View>
-                                <View style={styles.headings}><Text style={styles.HeadingText}>Set Aucation Period</Text></View>
-
-                                <View >
-                                    <View >
-                                        <TouchableOpacity style={styles.dateTime} onPress={this._showDateTimePickerStart}>
-                                            <Text style={{
-                                                fontSize: 15,
-                                                fontWeight: 'bold',
-                                                color: "#424D62",
-                                            }}> <Icon name='clock' size={30} color='#30e836' /> Start Time:</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                    <DateTimePicker
-                                        isVisible={this.state.isDateTimePickerVisibleStart}
-                                        onConfirm={this._handleDatePickedStart}
-                                        onCancel={this._hideDateTimePickerStart}
-                                        is24Hour={true}
-                                        mode={'datetime'}
-                                        titleIOS={'Open Time'}
-                                    />
-                                    {StartTime && <View>
-                                        <Text>{StartTime}</Text>
-                                    </View>}
-                                </View>
-
-                                <View>
-                                    <View>
-                                        <TouchableOpacity style={styles.dateTime} onPress={this._showDateTimePickerEnd}>
-                                            <Text style={{
-                                                fontSize: 15,
-                                                fontWeight: 'bold',
-                                                color: "#424D62",
-                                            }
-                                            }> <Icon name='clock' size={30} color='#30e836' />Ending Time:</Text>
-                                        </TouchableOpacity>
-
-                                    </View>
-                                    <DateTimePicker
-                                        isVisible={this.state.isDateTimePickerVisibleEnd}
-                                        onConfirm={this._handleEndDateEnd}
-                                        onCancel={this._hideDateTimePickerEnd}
-                                        is24Hour={true}
-                                        mode={'datetime'}
-                                        titleIOS={'Open Time'}
-                                    />
-                                    {EndTime && <View>
-                                        <Text>{EndTime}</Text>
-                                    </View>}
-                                </View>
-                            </View>
-                            <View>
-                                <View style={styles.headings}>
-                                    <Text style={styles.HeadingText}>Product Image</Text>
-                                </View>
-                                <View style={{ justifyContent: "center" }}>
-                                    {image &&
-                                        <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
-                                </View>
-                                <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 30, marginBottom: 30 }}>
-                                    <Button
-                                        title="Pick an image from camera roll"
-                                        onPress={() => this._pickImage()}
-                                    />
-                                </View>
-                            </View>
-                            <View style={{ flexDirection: 'row', justifyContent: 'center', flex: 1 }}>
-                                <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 6 }}>Starting Bid:</Text>
+                        <View>
+                            <View style={styles.headings}><Text style={styles.HeadingText}>Product Name</Text></View>
+                            <View style={styles.InputDiv}>
                                 <TextInput
-                                    style={styles.inputPrice}
+                                    style={styles.InputFields}
+                                    onChangeText={(name) => this.setState({ name })}
+                                    placeholder={'Product Name'}
+                                    value={this.state.text}
+                                />
+                            </View>
+                        </View>
+
+                        <View>
+                            <View style={styles.headings}><Text style={styles.HeadingText}>Product Description</Text></View>
+                            <View style={styles.InputDiv}>
+                                <TextInput
+                                    style={styles.InputFields}
+                                    multiline={true}
+                                    onChangeText={(decscrition) => this.setState({ decscrition })}
+                                    placeholder='Product decscrition'
+                                    value={this.state.text}
+                                />
+                            </View>
+                        </View>
+                        <View>
+                            <View style={styles.headings}><Text style={styles.HeadingText}>Starting Bid</Text></View>
+                            <View style={styles.InputDiv}>
+                                <TextInput
+                                    style={styles.InputFields}
                                     onChangeText={(e) => this.setState({ Bid: e })}
                                     value={Bid}
                                     placeholder={'Price'}
-                                    placeholderTextColor='rgba(255,255,255,0.7)'
                                     keyboardType='numeric'
                                 />
                             </View>
                         </View>
+                        <View>
+                            <View style={styles.headings}><Text style={styles.HeadingText}>Chose your product category</Text></View>
+                            <View style={styles.InputDiv}>
+                                <Dropdown
+                                    label='Select category'
+                                    data={Category}
+                                    // baseColor={'#ccff33'}
+                                    // textColor={'#ffff99'}
+                                    // itemColor={'#00e6e6'}
+                                    selectedItemColor={'#ff00aa'}
+                                    onChangeText={e => this.setState({ category: e })}
+                                />
+                            </View>
+                        </View>
+
+                        <View>
+                            <View style={styles.headings}><Text style={styles.HeadingText}>Set Auction Period</Text></View>
+
+                            <View>
+                                <View style={{}}>
+                                    <TouchableOpacity style={styles.dateTime} onPress={this._showDateTimePickerStart}>
+                                        <Text style={{
+                                            fontSize: 15,
+                                            fontWeight: 'bold',
+                                            color: "#424D62",
+                                        }}> <Icon name='clock-o' size={20} color='#30e836' />   Start Time:</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <DateTimePicker
+                                    isVisible={this.state.isDateTimePickerVisibleStart}
+                                    onConfirm={this._handleDatePickedStart}
+                                    onCancel={this._hideDateTimePickerStart}
+                                    is24Hour={true}
+                                    mode={'datetime'}
+                                    titleIOS={'Open Time'}
+                                />
+                                {StartTime && <View style={{ alignItems: 'center' }}>
+                                    <Text >{StartTime}</Text>
+                                </View>}
+                            </View>
+
+                            <View >
+                                <View>
+                                    <TouchableOpacity style={styles.dateTime} onPress={this._showDateTimePickerEnd}>
+                                        <Text style={{
+                                            fontSize: 15,
+                                            fontWeight: 'bold',
+                                            color: "#424D62",
+                                        }
+                                        }> <Icon name='clock-o' size={20} color='#30e836' />   Ending Time:</Text>
+                                    </TouchableOpacity>
+
+                                </View>
+                                <DateTimePicker
+                                    isVisible={this.state.isDateTimePickerVisibleEnd}
+                                    onConfirm={this._handleEndDateEnd}
+                                    onCancel={this._hideDateTimePickerEnd}
+                                    is24Hour={true}
+                                    mode={'datetime'}
+                                    titleIOS={'Open Time'}
+                                />
+                                {EndTime && <View style={{ alignItems: 'center' }}>
+                                    <Text >{EndTime}</Text>
+                                </View>}
+                            </View>
+                        </View>
+                        <View>
+                            <View style={styles.headings}>
+                                <Text style={styles.HeadingText}>Product Image</Text>
+                            </View>
+                            <View style={{ alignItems: "center" }}>
+                                {image ?
+                                    <Image source={{ uri: image }} style={{ width: 270, height: 230 }} />
+                                    :
+                                    <Image source={require("../../../assets/up.png")} style={{ width: 200, height: 200 }} />
+                                }
+                            </View>
+                            <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 30, marginBottom: 30 }}>
+                                <Button
+                                    title="Pick an image from camera roll"
+                                    onPress={() => this._pickImage()}
+                                />
+                            </View>
+                        </View>
+                        </View>
+                        <View style={{ height: 20, marginBottom:10}}>
+                            <Button
+                                onPress={() => this.submit()}
+                                title="Submit"
+                                color="#841584"
+                            />
+                        </View>
                         <View style={{ height: 20 }}></View>
-                    </View>
+
                     </KeyboardAvoidingView>
                 </ScrollView>
 
@@ -267,23 +316,26 @@ const styles = StyleSheet.create({
         borderBottomColor: 'gray',
         borderBottomWidth: 1,
         fontSize: 15,
+        
     },
     InputDiv: {
         margin: 5,
         padding: 5,
     },
     MainDiv: {
-        margin: 5
+        margin: 5,
+        backgroundColor: '#e9f1e2',
+        borderRadius: 10,
     },
     headings: {
-        padding: 5,
-        margin: 5,
-        justifyContent: 'flex-start',
+       paddingHorizontal:10,
+        justifyContent: 'center',
+        // alignItems: 'center'
     },
     HeadingText: {
-        fontSize: 20,
+        fontSize: 15,
         fontWeight: 'bold',
-        color: "#424D62",
+        color: "#4860a5",
 
     },
     inputPrice: {
