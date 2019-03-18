@@ -10,6 +10,8 @@ export function current_User(currentUser) {
     return dispatch => {
         const UID = currentUser.uid
         var arr = [];
+        currentUserPost = [];
+        allPost = [];
         dispatch(
             { type: actionTypes.UID, payload: UID }
         )
@@ -29,6 +31,36 @@ export function current_User(currentUser) {
                 )
             }
         })
+
+        //Posts
+        firebase.database().ref('/Aucation/').on("child_added", snapShot => {
+            for (var key in snapShot.val()) {
+                var val = snapShot.val()[key]
+                if (snapShot.key === UID) {
+                    // console.log(val,"action my post")
+                    // console.log(snapShot.key,"key caheck karo")
+                    const obj = {
+                        key: key,
+                        data: val
+                    }
+                    currentUserPost.push(obj)
+                    dispatch(
+                        { type: actionTypes.USERPOST, payload: currentUserPost }
+                    )
+                } else {
+                    // console.log(val,"action all post")
+                    const obj = {
+                        key: key,
+                        data: val
+                    }
+                    allPost.push(obj)
+                    dispatch(
+                        { type: actionTypes.ALLPOST, payload: allPost }
+                    )
+                }
+            }
+        })
+
     }
 }
 
@@ -39,20 +71,17 @@ export function current_User(currentUser) {
 // current User messaeg
 export function User_Messages(userCurrent) {
     return dispatch => {
-        // console.log(userCurrent,'dedux')
 
         var arr = [];
         var flag
         var chatMessages = []
         firebase.database().ref('/Messages/').on('child_added', snapShot => {
             const Messages = snapShot.val();
-
             // console.log('ye check karo ',Messages)
             flag = !flag
             if (Messages.senderUid === userCurrent.uid || Messages.reciverUid === userCurrent.uid) {
                 // console.log("user", snapShot.val())
                 chatMessages.push(Messages)
-
                 dispatch(
                     { type: actionTypes.CHAT, payload: chatMessages }
                 )
@@ -60,10 +89,10 @@ export function User_Messages(userCurrent) {
             dispatch(
                 { type: actionTypes.FLAG, payload: flag }
             )
-
-
         })
-        console.log(chatMessages, 'dheklo')
+
+
+
 
     }
 }
@@ -81,29 +110,29 @@ export function Log_Out() {
                 { type: actionTypes.ALLUSER, payload: null }
             )
             dispatch(
-                { type: actionTypes.SENDREQUEST, payload: null }
+                { type: actionTypes.ALLPOST, payload: null }
             )
             dispatch(
-                { type: actionTypes.RECEIVEREQUEST, payload: null }
+                { type: actionTypes.USERPOST, payload: null }
             )
-            dispatch(
-                { type: actionTypes.CHAT, payload: null }
-            )
-            dispatch(
-                { type: actionTypes.FLAG, payload: null }
-            )
-            dispatch(
-                { type: actionTypes.NEWCHAT, payload: null }
-            )
+            // dispatch(
+            //     { type: actionTypes.CHAT, payload: null }
+            // )
+            // dispatch(
+            //     { type: actionTypes.FLAG, payload: null }
+            // )
+            // dispatch(
+            //     { type: actionTypes.NEWCHAT, payload: null }
+            // )
         })
     }
 }
 
 
-        
+
 export function Updte(uid) {
     return dispatch => {
-        const UID =uid
+        const UID = uid
         var arr = [];
         firebase.database().ref('/UserData/').on('child_added', snapShot => {
             const UserData = snapShot.val();
@@ -118,12 +147,12 @@ export function Updte(uid) {
                 arr.push(snapShot.val())
                 dispatch(
                     { type: actionTypes.ALLUSER, payload: arr }
-                    )
-                }
-                console.log("alluser dashboar", arr)
+                )
+            }
+            console.log("alluser dashboar", arr)
         })
-      
-        
-        }
-    
+
+
+    }
+
 }             

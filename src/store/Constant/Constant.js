@@ -3,6 +3,8 @@ const actionTypes = {
     USER: "USER",
     ALLUSER: 'ALLUSER',
     FLAG:'FLAG',
+    USERPOST:'USERPOST',
+    ALLPOST:'ALLPOST'
 }
 
 export default actionTypes;

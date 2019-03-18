@@ -36,7 +36,7 @@ class Drawer extends React.Component {
         const resetAction = StackActions.reset({
             index: 0,
             actions: [
-                NavigationActions.navigate({ routeName: 'LogIn' }),
+                NavigationActions.navigate({ routeName: 'Login' }),
             ]
         })
         this.props.navigation.dispatch(resetAction)

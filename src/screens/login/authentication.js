@@ -96,6 +96,44 @@ class LogIn extends React.Component {
         }
     };
   
+    async logInFB() {
+
+        const {
+            type,
+            token,
+            expires,
+            permissions,
+            declinedPermissions,
+        } = await Expo.Facebook.logInWithReadPermissionsAsync('395134547942216', {
+            permissions: ['public_profile'],
+        });
+        if (type === 'success') {
+            const credential = firebase.auth.FacebookAuthProvider.credential(token)
+
+            firebase.auth().signInAndRetrieveDataWithCredential(credential).then((success) => {
+
+                console.log(success.additionalUserInfo.profile.name, 'success******');
+                var currentUID = success.user.uid
+                var obj = {
+                    name: success.additionalUserInfo.profile.name,
+                    UID: success.user.uid,
+                    photo: success.user.photoURL,
+                    Token: token,
+                    status: 'unblock'
+
+                }
+                firebase.database().ref('/Users/' + currentUID).update(obj);
+                this.props.user(currentUID)
+            })
+                .catch((error) => {
+                })
+           
+        } else {
+            type === 'cancel'
+        }
+
+    }
+
     static navigationOptions = { header: null }
     render() {
         const { Email, Password } = this.state
@@ -110,6 +148,17 @@ class LogIn extends React.Component {
                     centerComponent={{ text: "Auction Point", style: { color: '#fff', fontSize: 20 } }}
                 />
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                
+
+                <TouchableOpacity onPress={() => this.logInFB()}>
+                        <View style={{ width: 300, margin: 20 }}>
+                            <SocialIcon
+                                title='Sign In With Facebook'
+                                button
+                                type='facebook'
+                            />
+                        </View>
+                    </TouchableOpacity>
                     <TouchableOpacity  onPress={() => this._loginWithGoogle()}>
                         <View style={{ width: 300, margin: 20 }}>
                             <SocialIcon

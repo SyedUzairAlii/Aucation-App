@@ -4,8 +4,8 @@ const INITIAL_STATE = {
     UID: null,
     USER: null,
     ALLUSER: null,
-    CIRCLES: null,
-    MODIFYCIRCLE: null,
+    USERPOST: null,
+    ALLPOST: null,
     FLAG: false,
 }
 
@@ -26,15 +26,15 @@ export default (states = INITIAL_STATE, action) => {
                 ...states,
                 ALLUSER: action.payload
             })
-        case 'CIRCLES':
+        case 'USERPOST':
             return ({
                 ...states,
-                CIRCLES: action.payload
+                USERPOST: action.payload
             })
-        case 'MODIFYCIRCLE':
+        case 'ALLPOST':
             return ({
                 ...states,
-                MODIFYCIRCLE: action.payload
+                ALLPOST: action.payload
             })
         case 'FLAG':
             return ({

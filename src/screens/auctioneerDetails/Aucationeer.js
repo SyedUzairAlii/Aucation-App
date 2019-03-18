@@ -70,7 +70,7 @@ class Aucationeer extends React.Component {
     }
 
     Home() {
-        this.props.navigation.navigate('Home')
+        this.props.navigation.openDrawer();
     }
 
     //start time
@@ -159,7 +159,7 @@ class Aucationeer extends React.Component {
                         backgroundColor: '#075e54',
                         justifyContent: 'space-around',
                     }}
-                    leftComponent={{ icon: 'home', color: '#fff', onPress: () => this.Home() }}
+                    leftComponent={{ icon: 'menu', color: '#fff', onPress: () => this.Home() }}
                     centerComponent={{ text: "Creat Auction", style: { color: '#fff', fontSize: 20 } }}
                 />
                 <ScrollView>

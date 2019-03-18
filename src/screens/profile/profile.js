@@ -11,54 +11,63 @@ import { Updte } from '../../store/actions/authAction'
 import geolib from 'geolib'
 import moment from 'moment'
 
-class Home extends React.Component {
+class Profile extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             loading: false,
         };
     }
+    componentDidMount(){
+        const { me, allUser, allPost, currentPosts } = this.props
+        console.log(currentPosts ,';my post did')
+        setTimeout(() => {
+            this.setState({
+                me,
+            })
+    var liveBid = [];
+    var upcoming = [];
+    // console.log(allPost ,';all post will')
+    if (currentPosts) {
+        currentPosts.map(item => {
+            if (moment(item.data.StartTime) <= moment(Date.now())
+                &&
+                moment(item.data.EndTime) >= moment(Date.now())) {
+                // console.log(item,'item live know')
+                liveBid.push(item)
+
+            }
+            else if (moment(item.data.StartTime) > moment(Date.now())) {
+                upcoming.push(item)
+                // console.log('upcomming', item);
+            }
+
+        })
+    }
+
+    if (liveBid.length) {
+        this.setState({ liveBid })
+
+        console.log(liveBid, '?>??live???')
+    }
+    if (upcoming.length) {
+        this.setState({ upcoming })
+
+        console.log(upcoming, '?>????????')
+
+    }
+}, 100)
+    }
 
     componentWillReceiveProps(props) {
         const { me, allUser, allPost, currentPosts } = props
-        setTimeout(() => {
-            var liveBid = [];
-            var upcoming = [];
-            // console.log(allPost ,';all post will')
-            // console.log(currentPosts ,';my post will')
-            if (allPost) {
-                allPost.map(item => {
-                    if (moment(item.data.StartTime) <= moment(Date.now())
-                        &&
-                        moment(item.data.EndTime) >= moment(Date.now())) {
-                        // console.log(item,'item live know')
-                        liveBid.push(item)
-
-                    }
-                    else if (moment(item.data.StartTime) > moment(Date.now())) {
-                        upcoming.push(item)
-                        // console.log('upcomming', item);
-                    }
-
-                })
-            }
-
-            if (liveBid.length) {
-                this.setState({ liveBid })
-
-                console.log(liveBid, '?>??live???')
-            }
-            if (upcoming.length) {
-                this.setState({ upcoming })
-
-                console.log(upcoming, '?>????????')
-
-            }
-        }, 100)
+       
+        console.log(currentPosts ,';my post will')
+       
     }
     BidLive = (i) => {
         // console.log(i, "ii")
-        this.props.navigation.navigate('Live', { i })
+        this.props.navigation.navigate('ProfilePost', { i })
 
     }
 
@@ -80,7 +89,7 @@ class Home extends React.Component {
     static navigationOptions = { header: null }
 
     render() {
-        const { allUser, loading, services, match, upcoming, liveBid } = this.state
+        const { allUser, loading, services, match, upcoming, liveBid,me } = this.state
         return (
             <View styel={{ flex: 1 }}>
                 <Header
@@ -91,8 +100,7 @@ class Home extends React.Component {
 
                     }}
                     leftComponent={{ icon: 'menu', color: '#fff', onPress: () => this.Drawer() }}
-                    centerComponent={{ text: "Auction Point", style: { color: '#fff', fontSize: 20 } }}
-                    rightComponent={{ icon: 'search', color: '#fff', onPress: () => this.seacrh() }}
+                    centerComponent={{ text: me ? me.name: null, style: { color: '#fff', fontSize: 20 } }}
                 />
                 <ScrollView styel={{ flex: 1 }}
                     refreshControl={
@@ -108,40 +116,39 @@ class Home extends React.Component {
                         <View >
                             {upcoming &&
                                 <View>
-                                    <Text style={{ alignItems: 'center', fontSize: 25, fontWeight: "bold", color: '#075e54', paddingLeft: 20 }}>Up Comming Bid's</Text>
-                                    <ScrollView horizontal={true}>
+                                    <Text style={{ alignItems: 'center', fontSize: 15, fontWeight: "bold", color: '#075e54', paddingLeft: 20,justifyContent:'center'}}>Your Up Comming Bid's</Text>
+                                    <ScrollView alwaysBounceVertical>
                                         {upcoming &&
                                             upcoming.map((i) => {
                                                 // console.log(i, "><><><<>")
                                                 return (
-                                                    <View key={i.key} style={{ flexDirection: "row" }} >
-                                                        <LinearGradient
-                                                            colors={['#25d366', 'transparent']}
-                                                            style={{
-                                                                position: 'absolute',
-                                                                left: 0,
-                                                                right: 0,
-                                                                top: 0,
-                                                                height: 300,
-                                                            }}
-                                                        />
-                                                        <View style={{ height: 350, width: 200, borderWidth: 2, flex: 1, margin: 10, borderRadius: 10, borderColor: '#34b7f1' }}>
-                                                            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                                                                <Text style={styles.titleName}>{i.data.name}</Text>
-                                                            </View>
-                                                            <View style={{ borderRadius: 5, overflow: 'hidden', height: 200, }}>
-                                                                <Image style={styles.img} source={{ uri: i.data.image }} />
-                                                            </View>
-                                                            <TouchableOpacity onPress={() => this.viewSeller(i)}>
-                                                                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                                                                    <Text style={{ fontSize: 16, color: '#3498db', paddingBottom: 8, paddingTop: 3 }}>{`Starting BID ${i.data.Bid} PKR`}</Text>
-                                                                </View>
-                                                                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                                                                    <Text style={styles.cardTitle}>{moment(new Date(i.data.StartTime)).fromNow()}</Text>
-                                                                </View>
-                                                            </TouchableOpacity>
-                                                        </View>
+                                                    <View key={i.key} style={{ flexDirection: 'column', borderWidth: 2, borderRadius: 10, borderColor: '#34b7f1', height: 250, margin: 5, alignItems: 'center', overflow: "hidden" }} >
+                                                    <LinearGradient
+                                                        colors={['#25d366', 'transparent']}
+                                                        style={{
+                                                            position: 'absolute',
+                                                            left: 0,
+                                                            right: 0,
+                                                            top: 0,
+                                                            height: 150,
+                                                        }}
+                                                    />
+
+                                                    <View style={{ alignItems: 'center' }}>
+                                                        <Text style={styles.titleName}>{i.data.name}</Text>
                                                     </View>
+                                                    <View style={{ alignItems: 'center' }}>
+                                                        <Image style={{ width: 300, height: 170 }} source={{ uri: i.data.image }} />
+                                                    </View>
+                                                    <View style={{ alignItems: 'center', marginTop: 2, marginBottom: 2, paddingTop: 10 }}>
+                                                        <Button
+                                                            width="100"
+                                                            title="View"
+                                                            onPress={() => this.BidLive(i)
+                                                            }
+                                                        />
+                                                    </View>
+                                                </View>
                                                 )
                                             })
                                         }
@@ -155,13 +162,13 @@ class Home extends React.Component {
 
                             {liveBid &&
                                 <View>
-                                    <Text style={{ fontSize: 25, fontWeight: "bold", color: '#075e54', paddingLeft: 20 }}> Live Auctions</Text>
+                                    <Text style={{ fontSize: 15, fontWeight: "bold", color: '#075e54', paddingLeft: 20,alignItems:'center',justifyContent:'center'}}> your Live Auctions</Text>
                                     <ScrollView alwaysBounceVertical>
                                         {liveBid &&
                                             liveBid.map((i) => {
                                                 // console.log(i, "><><><<>")
                                                 return (
-                                                    <View key={i.key} style={{ flexDirection: 'column', borderWidth: 2, borderRadius: 10, borderColor: '#34b7f1', height: 300, margin: 5, alignItems: 'center', overflow: "hidden" }} >
+                                                    <View key={i.key} style={{ flexDirection: 'column', borderWidth: 2, borderRadius: 10, borderColor: '#34b7f1', height: 250, margin: 5, alignItems: 'center', overflow: "hidden" }} >
                                                         <LinearGradient
                                                             colors={['#25d366', 'transparent']}
                                                             style={{
@@ -178,7 +185,7 @@ class Home extends React.Component {
                                                             <Text style={styles.titleName}>{i.data.name}</Text>
                                                         </View>
                                                         <View style={{ alignItems: 'center' }}>
-                                                            <Image style={{ width: 350, height: 200 }} source={{ uri: i.data.image }} />
+                                                            <Image style={{ width: 300, height: 170 }} source={{ uri: i.data.image }} />
                                                         </View>
                                                         <View style={{ alignItems: 'center', marginTop: 2, marginBottom: 2, paddingTop: 10 }}>
                                                             <Button
@@ -259,5 +266,5 @@ function mapDispatchToProp(dispatch) {
     })
 }
 
-export default connect(mapStateToProp, mapDispatchToProp)(Home);
+export default connect(mapStateToProp, mapDispatchToProp)(Profile);
 
