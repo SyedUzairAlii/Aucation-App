@@ -8,6 +8,7 @@ import Chat from '../src/screens/chat/inbox'
 import Inbox from '../src/screens/inbox/inbox'
 import Profile from '../src/screens/profile/profile'
 import ProfilePost from '../src/screens/profilePost/ProfilePost'
+import BidAdv from '../src/screens/bidAdvance/BidAdvance'
 const StackNavigator = createStackNavigator({
     Login: {
         screen: Login
@@ -28,6 +29,8 @@ const StackNavigator = createStackNavigator({
         screen:Profile
     },ProfilePost:{
         screen:ProfilePost
+    },BidAdv:{
+        screen:BidAdv
     }
 
 },{

@@ -24,22 +24,8 @@ class ProfilePost extends React.Component {
         const { navigation, allUser } = this.props;
         var sellerr
         const item = navigation.getParam('i')
-        const Seller = item.data.UID
 
-        if (Seller) {
-            allUser.map((i) => {
-                if (i.UID === Seller) {
-                    sellerr = i
-                    console.log(i)
-                    this.setState({
-                        Seller: sellerr
-                    })
-
-                }
-
-            }
-            )
-        }
+      
         if (item) {
             this.setState({
                 Name: item.data.name,
@@ -175,6 +161,9 @@ class ProfilePost extends React.Component {
             Bid: ''
         })
     }
+    Drawer = () => {
+        this.props.navigation.openDrawer();
+    }
 
     static navigationOptions = { header: null }
 
@@ -201,7 +190,6 @@ class ProfilePost extends React.Component {
                     }}
                     leftComponent={{ icon: 'menu', color: '#fff', onPress: () => this.Drawer() }}
                     centerComponent={{ text: Name ? Name : null, style: { color: '#fff', fontSize: 20 } }}
-                    rightComponent={{ icon: 'comment', color: '#fff', onPress: () => this.Chat() }}
                 />
                 <ScrollView
 
@@ -222,7 +210,6 @@ class ProfilePost extends React.Component {
                                 <Text style={styles.HeadingText}>{`Decscrition: ${description}`}</Text>
                                 <Text style={styles.HeadingText}>{`Starting Bid: ${StartingBid} pkr`}</Text>
                                 <Text style={styles.HeadingText}>{`time left: ${moment(new Date(EndTime)).fromNow()}`}</Text>
-                                <Text style={styles.HeadingText}>{`Seller: ${Seller.name}`}</Text>
 
 
                             </View>
@@ -255,6 +242,7 @@ class ProfilePost extends React.Component {
                     })}
 </View>
                     }
+                    <View style={{height:100}}></View>
 
                 </ScrollView>
             </View>

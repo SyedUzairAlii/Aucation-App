@@ -134,6 +134,8 @@ export function Updte(uid) {
     return dispatch => {
         const UID = uid
         var arr = [];
+        
+
         firebase.database().ref('/UserData/').on('child_added', snapShot => {
             const UserData = snapShot.val();
             if (snapShot.key === UID) {
@@ -151,6 +153,7 @@ export function Updte(uid) {
             }
             console.log("alluser dashboar", arr)
         })
+      
 
 
     }

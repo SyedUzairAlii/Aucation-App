@@ -4,7 +4,7 @@ import Navigation from './navigation';
 import { Provider } from 'react-redux';
 import store from './src/store/store';
 import { Constants } from 'expo';
-// console.disableYellowBox = true;
+console.disableYellowBox = true;
 
 
 

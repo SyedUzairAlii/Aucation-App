@@ -18,10 +18,48 @@ class Home extends React.Component {
             loading: false,
         };
     }
+    // componentWillUnmount(){
+    //     console.log('compoenet wi un wount ')
+    // }
 
     componentWillReceiveProps(props) {
         const { me, allUser, allPost, currentPosts } = props
         setTimeout(() => {
+            var liveBid = [];
+            var upcoming = [];
+            // console.log(allPost ,';all post will')
+            // console.log(currentPosts ,';my post will')
+            if (allPost) {
+                allPost.map(item => {
+                    if (moment(item.data.StartTime) <= moment(Date.now())
+                        &&
+                        moment(item.data.EndTime) >= moment(Date.now())) {
+                        // console.log(item,'item live know')
+                        liveBid.push(item)
+
+                    }
+                    else if (moment(item.data.StartTime) > moment(Date.now())) {
+                        upcoming.push(item)
+                        // console.log('upcomming', item);
+                    }
+
+                })
+            }
+
+            if (liveBid.length) {
+                this.setState({ liveBid })
+
+                // console.log(liveBid, '?>??live???')
+            }
+            if (upcoming.length) {
+                this.setState({ upcoming })
+
+                // console.log(upcoming, '?>????????')
+
+            }
+        }, 100)
+        var  check = setInterval(() => {
+            // console.log('hello')
             var liveBid = [];
             var upcoming = [];
             // console.log(allPost ,';all post will')
@@ -52,13 +90,21 @@ class Home extends React.Component {
                 this.setState({ upcoming })
 
                 console.log(upcoming, '?>????????')
-
+                
             }
-        }, 100)
+        }, 25000)
     }
+     myStopFunction = ()=> {
+        clearTimeout(check);
+      }
     BidLive = (i) => {
         // console.log(i, "ii")
         this.props.navigation.navigate('Live', { i })
+
+    }
+    BidAdv = (i) => {
+        // console.log(i, "ii")
+        this.props.navigation.navigate('BidAdv', { i })
 
     }
 
@@ -132,7 +178,7 @@ class Home extends React.Component {
                                                             <View style={{ borderRadius: 5, overflow: 'hidden', height: 200, }}>
                                                                 <Image style={styles.img} source={{ uri: i.data.image }} />
                                                             </View>
-                                                            <TouchableOpacity onPress={() => this.viewSeller(i)}>
+                                                            <TouchableOpacity onPress={() => this.BidAdv(i)}>
                                                                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                                                                     <Text style={{ fontSize: 16, color: '#3498db', paddingBottom: 8, paddingTop: 3 }}>{`Starting BID ${i.data.Bid} PKR`}</Text>
                                                                 </View>
@@ -202,7 +248,7 @@ class Home extends React.Component {
 
 
                     </View>
-                    <View style={{height:100}}></View>
+                    <View style={{ height: 100 }}></View>
                 </ScrollView>
             </View>
         );

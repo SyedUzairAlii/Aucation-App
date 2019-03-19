@@ -44,9 +44,11 @@ class Aucationeer extends React.Component {
             alert('select atlest 10 mint to the current time')
         } else if (!EndTime) {
             alert('Please Select Ending Time')
-        } else if (EndTime <= StartTime) {
-            alert('Please select Correct Ending Time')
-        } else if (!Bid) {
+        }
+        //  else if (EndTime <= StartTime) {
+        //     alert('Please select Correct Ending Time')
+        // } 
+        else if (!Bid) {
             alert('Please Add Minimum Price')
         } 
         else if (!image) {

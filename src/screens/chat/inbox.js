@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { ImagePicker, Permissions } from 'expo'
 import { connect } from 'react-redux'
 import firebase from 'firebase'
+import { Input, Header, Divider, Avatar, Button } from 'react-native-elements';
 import moment from 'moment'
 import www from '../../../assets/inbox.png'
 
@@ -108,8 +109,8 @@ class Chat extends React.Component {
     }
     static navigationOptions = {
 
-        title:"Chat", 
-        
+        title: "Chat",
+
         headerStyle: {
             backgroundColor: '#075e54',
         },
@@ -121,7 +122,7 @@ class Chat extends React.Component {
     render() {
         const { text, chatMesg, currentUser, person, btn } = this.state
 
-        const keyboardVerticalOffset = Platform.OS === 'ios' ? 53 : 0 || Platform.OS === 'android' ? 53 : 0
+        const keyboardVerticalOffset = Platform.OS === 'ios' ? 53 : 0 || Platform.OS === 'android' ? 70 : 0
         return (
             <View style={{ flex: 1 }}>
                 <KeyboardAvoidingView style={{ flex: 1 }} behavior='padding' enabled keyboardVerticalOffset={keyboardVerticalOffset}>
@@ -135,8 +136,8 @@ class Chat extends React.Component {
                                         // console.log(i, "mapmsg")
                                         if (i.senderUid === currentUser.UID) {
                                             return (
-                                                <View key={index} style={{ backgroundColor: '#E3FDCB', width: 200, marginLeft: 150, borderRadius: 20,  marginBottom: 5, marginTop: 5, justifyContent: 'flex-end', }}>
-                                                    <Text style={{ fontSize: 14, padding: 1,  margin: 2, marginLeft: 6, marginRight: 6 ,alignItems:'center'}}>{i.message}</Text>
+                                                <View key={index} style={{ backgroundColor: '#E3FDCB', width: 200, marginLeft: 150, borderRadius: 20, marginBottom: 5, marginTop: 5, justifyContent: 'flex-end', }}>
+                                                    <Text style={{ fontSize: 14, padding: 1, margin: 2, marginLeft: 20, marginRight: 6, alignItems: 'center' }}>{i.message}</Text>
                                                     <Text style={{ fontSize: 10, margin: 2, color: 'gray' }}>
                                                         {moment((i.date)).format(" h:mm: A")}
                                                     </Text>
@@ -145,13 +146,13 @@ class Chat extends React.Component {
                                             )
                                         } else if (i.senderUid === person.UID) {
                                             return (
-                                                <View key={index}style={{backgroundColor:'white',width:200, borderRadius:20,paddingLeft:10,justifyContent:'center',marginBottom:5,marginTop:5,justifyContent:'flex-start'}}>
-                                                    <Text style={{ fontSize: 14, padding: 1,  margin: 2, marginLeft: 6, marginRight: 6 }}>{i.message}</Text>
+                                                <View key={index} style={{ backgroundColor: 'white', width: 200, borderRadius: 20, paddingLeft: 10, justifyContent: 'center', marginBottom: 5, marginTop: 5, justifyContent: 'flex-start' }}>
+                                                    <Text style={{ fontSize: 14, padding: 1, margin: 2, marginLeft: 6, marginRight: 6 }}>{i.message}</Text>
                                                     <Text style={{ fontSize: 10, margin: 1, color: 'gray' }}>
                                                         {moment((i.date)).format(" h:mm: A")}
                                                     </Text>
                                                 </View>
-                                                
+
                                             )
                                         }
 
@@ -160,29 +161,45 @@ class Chat extends React.Component {
 
                             </View>
                         </ScrollView>
-                        <View style={{ justifyContent: 'space-evenly', flexDirection: 'row', backgroundColor: '#f2f3f4' }}>
-                            <TextInput
-                                style={styles.input}
-                                onChangeText={(e) => {
-                                    this.setState({ text: e })
-                                    if (e) {
-                                        this.setState({ btn: true })
-                                    } else {
-                                        this.setState({ btn: false })
-                                    }
-                                }}
-                                value={text}
-                                placeholder={'Type a Message ...'}
-                                placeholderTextColor='rgba(255,255,255,0.7)'
-                            // autoFocus
-                            />
-                            {btn ?
-                                <Text onPress={() => this.Send()} style={{ fontSize: 18, fontWeight: 'bold', color: "#3498db", paddingTop: 10 }}>
-                                    <Icon name="send" size={20} /> SEND</Text>
-                                :
-                                <Text style={{ fontSize: 18, fontWeight: 'bold', color: "#3498db", paddingTop: 10, opacity: 0.5 }}>
-                                    <Icon name="send" size={20} /> SEND</Text>
-                            }
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginBottom: 10 }}>
+                            <View style={{ height: 40, backgroundColor: 'white', width: '75%', borderRadius: 40, justifyContent: 'center', paddingHorizontal: 18, paddingVertical: 10 }}>
+                                {/* <ScrollView> */}
+                                <TextInput
+                                    // style={{
+                                    //   width:'100%'
+                                    // }}
+                                    multiline={true}
+                                    placeholder={'Type a mesage '}
+                                    pl
+                                    // inputAccessoryViewID={inputAccessoryViewID}
+                                    onChangeText={(e) => {
+                                        this.setState({ text: e })
+                                        if (e) {
+                                            this.setState({ btn: true })
+                                        } else {
+                                            this.setState({ btn: false })
+                                        }
+                                    }}
+                                    value={text}
+
+                                />
+                                {/* </ScrollView> */}
+                            </View>
+                            <View styele={{ width: '25%', height:14,width:'29%'}}>
+
+                                <Button
+                                    linearGradientProps={{
+                                        colors: ['#4c669f', '#3b5998', '#192f6a'],
+                                        start: { x: 0, y: 0.5 },
+                                        end: { x: 1, y: 0.5 },
+                                    }}
+                                    onPress={() => this.Send()}
+
+                                    large
+                                    // icon={{ name: 'arrow-small-right', type: 'octicon', }}
+                                    title='send'
+                                />
+                            </View>
                         </View>
                     </ImageBackground>
                 </KeyboardAvoidingView>
@@ -192,7 +209,7 @@ class Chat extends React.Component {
 }
 const styles = StyleSheet.create({
     input: {
-        backgroundColor: 'rgba(99, 172, 221,0.5)',
+        // backgroundColor: 'rgba(99, 172, 221,0.5)',
         marginBottom: 10,
         color: '#fff',
         height: 40,

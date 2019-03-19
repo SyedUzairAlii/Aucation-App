@@ -11,7 +11,7 @@ import { Updte } from '../../store/actions/authAction'
 import geolib from 'geolib'
 import moment from 'moment'
 
-class Live extends React.Component {
+class BidAdv extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -113,31 +113,7 @@ class Live extends React.Component {
     }
 
     // Updated = () => {
-    //     const { Bid, StartingBid, Seller,CurrentUserBid,AllBids} = this.state
-    //     const { me, navigation } = this.props
-    //     const item = navigation.getParam('i')
-    //     console.log(me, Bid)
-    //     var all = []
-    //     if(AllBids){
-    //         all = AllBids
-    //     }
-    //     if (StartingBid && Bid) {
-    //         const obj = {
-
-    //                 bid: Bid,
-    //                 Personpic: me.photo,
-    //                 personUID: me.UID,
-    //                 PersonName: me.name
-    //         }
-    //         all.push(obj)
-    //         firebase.database().ref('/Aucation/' + '/' + Seller.UID + '/' + item.key +'/'+ 'AuctionBid' ).set(all)
-    //     }
-    //     all=""
-    //     console.log(all,'allbids')
-    //     this.setState({
-    //         Bid: ''
-    //     })
-    // }
+    
     Submite = () => {
         const { Bid, StartingBid, Seller, CurrentUserBid, AllBids } = this.state
         const { me, navigation } = this.props
@@ -221,30 +197,13 @@ class Live extends React.Component {
                             </View>
                             {CurrentUserBid ?
                                 <View>
-                                    <View style={styles.headings}><Text style={styles.HeadingText}> your Bid is placed</Text></View>
-                                    {/* <View style={styles.InputDiv}>
-                                        <TextInput
-                                            style={styles.InputFields}
-                                            onChangeText={(e) => this.setState({ Bid: e })}
-                                            value={Bid}
-                                            placeholder={'Price'}
-                                            keyboardType='numeric'
-                                        />
-                                    </View>
-                                    <View style={{ width: 80, justifyContent: "flex-end", alignContent: "center", }}>
-                                        <Button
-
-                                            title="Updated"
-                                            onPress={() => this.Updated()
-                                            }
-                                        />
-
-                                    </View> */}
+                                    <View style={styles.headings}><Text style={styles.HeadingText}>Update your Bid</Text></View>
+                                    <Text>Thank's! your Bid is placed come when Bid is Live.</Text>
 
                                 </View>
                                 :
                                 <View>
-                                    <View style={styles.headings}><Text style={styles.HeadingText}>Place your Bid</Text></View>
+                                    <View style={styles.headings}><Text style={styles.HeadingText}>Place your Bid in advance</Text></View>
                                     <View style={styles.InputDiv}>
                                         <TextInput
                                             style={styles.InputFields}
@@ -278,7 +237,7 @@ class Live extends React.Component {
 
                         </View>
                     }
-                    {AllBids && <View>
+                    {/* {AllBids && <View>
                         <Text style={{ alignItems: 'center', fontSize: 25, fontWeight: "bold", color: '#075e54', paddingLeft: 20 }}>Live Biding</Text>
                     {
                         
@@ -303,7 +262,7 @@ class Live extends React.Component {
                         )
                     })}
 </View>
-                    }
+                    } */}
                     <View style={{height:100}}></View>
 
                 </ScrollView>
@@ -402,5 +361,5 @@ function mapDispatchToProp(dispatch) {
     })
 }
 
-export default connect(mapStateToProp, mapDispatchToProp)(Live);
+export default connect(mapStateToProp, mapDispatchToProp)(BidAdv);
 
