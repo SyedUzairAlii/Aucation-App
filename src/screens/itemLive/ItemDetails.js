@@ -105,7 +105,7 @@ class Live extends React.Component {
         })
 
     }
-    
+
     Chat = () => {
         const { Seller } = this.state
         const item = Seller
@@ -143,21 +143,31 @@ class Live extends React.Component {
         const { me, navigation } = this.props
         const item = navigation.getParam('i')
         var all = AllBids
-
-        console.log(me, Bid)
+        var lastBid = AllBids.reduce(function (pre, current) {
+            return (pre.bid > current.bid) ? pre : current
+        })
         if (StartingBid && Bid) {
             if (AllBids) {
-                const obj = {
-
-                    bid: Bid,
-                    Personpic: me.photo,
-                    personUID: me.UID,
-                    PersonName: me.name
+                if (lastBid) {
+                    if (lastBid.personUID === me.UID) {
+                        alert('you last bid is higher!')
+                    } else {
+                        if (Bid <= lastBid.bid) {
+                            alert('Bid must be higher then last bid')
+                        } else {
+                            const obj = {
+                                bid: Bid,
+                                Personpic: me.photo,
+                                personUID: me.UID,
+                                PersonName: me.name
+                            }
+                            console.log(obj, "hello")
+                            all.push(obj)
+                            firebase.database().ref('/Aucation/' + '/' + Seller.UID + '/' + item.key + '/' + 'AuctionBid').set(all)
+                        }
+                    }
                 }
-                all.push(obj)
-                firebase.database().ref('/Aucation/' + '/' + Seller.UID + '/' + item.key + '/' + 'AuctionBid').set(all)
             } else {
-
                 const obj = {
                     AuctionBid: [{
                         bid: Bid,
@@ -167,8 +177,6 @@ class Live extends React.Component {
                     }]
                 }
                 firebase.database().ref('/Aucation/' + '/' + Seller.UID + '/' + item.key).update(obj)
-
-
             }
         }
         this.setState({
@@ -208,41 +216,18 @@ class Live extends React.Component {
                 />
                 <ScrollView
 
-                    // refreshControl={
-                    //     <RefreshControl
-                    //         refreshing={this.state.refreshing}
-                    //         onRefresh={this._onRefresh}
-                    //     />}
+                // refreshControl={
+                //     <RefreshControl
+                //         refreshing={this.state.refreshing}
+                //         onRefresh={this._onRefresh}
+                //     />}
                 >
                     {image &&
                         <View style={styles.MainDiv}>
                             <View style={{ borderRadius: 5, overflow: 'hidden', height: 200, justifyContent: 'center', padding: 2 }}>
                                 <Image style={{ height: 200, width: 350, alignContent: 'center' }} source={{ uri: image }} />
                             </View>
-                            {CurrentUserBid ?
-                                <View>
-                                    <View style={styles.headings}><Text style={styles.HeadingText}> your Bid is placed</Text></View>
-                                    {/* <View style={styles.InputDiv}>
-                                        <TextInput
-                                            style={styles.InputFields}
-                                            onChangeText={(e) => this.setState({ Bid: e })}
-                                            value={Bid}
-                                            placeholder={'Price'}
-                                            keyboardType='numeric'
-                                        />
-                                    </View>
-                                    <View style={{ width: 80, justifyContent: "flex-end", alignContent: "center", }}>
-                                        <Button
-
-                                            title="Updated"
-                                            onPress={() => this.Updated()
-                                            }
-                                        />
-
-                                    </View> */}
-
-                                </View>
-                                :
+                            {
                                 <View>
                                     <View style={styles.headings}><Text style={styles.HeadingText}>Place your Bid</Text></View>
                                     <View style={styles.InputDiv}>
@@ -278,33 +263,38 @@ class Live extends React.Component {
 
                         </View>
                     }
-                    {AllBids && <View>
-                        <Text style={{ alignItems: 'center', fontSize: 25, fontWeight: "bold", color: '#075e54', paddingLeft: 20 }}>Live Biding</Text>
-                    {
-                        
-                    AllBids.map((i)=>{
-                        return (
-                            <View style={{ minHeight: 40, maxHeight: 160 }} >
-                            <View style={styles.view}>
-                                <View>
-                                    <Image
-                                        source={{ uri: i.Personpic }}
-                                        style={{ width: 50, height: 60, borderRadius: 25 }}
-                                    />
+                    {AllBids &&
+                        <View>
+                            <Text style={{ alignItems: 'center', fontSize: 25, fontWeight: "bold", color: '#075e54', paddingLeft: 20 }}>Live Biding</Text>
+                            <View style={{ flexDirection: 'column-reverse' }}>
 
-                                </View>
-                                <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between' }}>
-                                    <Text style={{ fontSize: 16, fontWeight: "700", paddingLeft: 15 }} >{i.PersonName}</Text>
-                                    <Text style={{ fontSize: 16, fontWeight: "700", paddingLeft: 15 }} >{i.bid + ' PKR'}</Text>
-                                </View>
+                                {
 
+                                    AllBids.map((i) => {
+                                        return (
+                                            <View style={{ minHeight: 40, maxHeight: 160 }} >
+                                                <View style={styles.view}>
+                                                    <View>
+                                                        <Image
+                                                            source={{ uri: i.Personpic }}
+                                                            style={{ width: 50, height: 60, borderRadius: 25 }}
+                                                        />
+
+                                                    </View>
+                                                    <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between' }}>
+                                                        <Text style={{ fontSize: 16, fontWeight: "700", paddingLeft: 15 }} >{i.PersonName}</Text>
+                                                        <Text style={{ fontSize: 16, fontWeight: "700", paddingLeft: 15 }} >{i.bid + ' PKR'}</Text>
+                                                    </View>
+
+                                                </View>
+                                            </View>
+                                        )
+                                    })}
                             </View>
                         </View>
-                        )
-                    })}
-</View>
+
                     }
-                    <View style={{height:100}}></View>
+                    <View style={{ height: 100 }}></View>
 
                 </ScrollView>
             </View>

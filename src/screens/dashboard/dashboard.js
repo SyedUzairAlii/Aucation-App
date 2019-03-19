@@ -41,7 +41,38 @@ class Home extends React.Component {
                     else if (moment(item.data.StartTime) > moment(Date.now())) {
                         upcoming.push(item)
                         // console.log('upcomming', item);
+                    }else if (moment(item.data.EndTime) < moment(Date.now())) {
+                        if (!item.data.sellTo) {
+                            // console.log('is item ka winner koi ni hy ', item)
+                            if(item.data.AuctionBid){
+                                // console.log(item.data.AuctionBid,'aa')
+                                var AllBids = item.data.AuctionBid
+                                var heigherBid = AllBids.reduce(function (pre, current) {
+                                    return (pre.bid > current.bid) ? pre : current
+                                })
+                                if(heigherBid){
+                                    var obj ={
+                                        sellTo:heigherBid
+                                    }
+
+                                console.log(heigherBid,'heigher bid')
+                            firebase.database().ref('/Aucation/' + '/' + item.data.UID + '/' + item.key ).update(obj)
+
+                            }
+                            }else{
+
+                                var obj ={
+                                    sellTo:'no bid'
+                                }
+                            firebase.database().ref('/Aucation/' + '/' + item.data.UID + '/' + item.key).update(obj)
+
+                                console.log('no bid place')
+
+                            }
+                            
+                        }
                     }
+
 
                 })
             }
@@ -58,10 +89,11 @@ class Home extends React.Component {
 
             }
         }, 100)
-        var  check = setInterval(() => {
-            // console.log('hello')
+        var check = setInterval(() => {
+            console.log('hello')
             var liveBid = [];
             var upcoming = [];
+            
             // console.log(allPost ,';all post will')
             // console.log(currentPosts ,';my post will')
             if (allPost) {
@@ -75,7 +107,39 @@ class Home extends React.Component {
                     }
                     else if (moment(item.data.StartTime) > moment(Date.now())) {
                         upcoming.push(item)
-                        // console.log('upcomming', item);
+                        // console.log('upcomming', item);{}
+                    }
+                    else if (moment(item.data.EndTime) < moment(Date.now())) {
+                        if (!item.data.sellTo) {
+                            // console.log('is item ka winner koi ni hy ', item)
+                            if(item.data.AuctionBid){
+                                // console.log(item.data.AuctionBid,'aa')
+                                var AllBids = item.data.AuctionBid
+                                var heigherBid = AllBids.reduce(function (pre, current) {
+                                    return (pre.bid > current.bid) ? pre : current
+                                })
+                                if(heigherBid){
+                                    var obj ={
+                                        sellTo:heigherBid
+                                    }
+
+                                console.log(heigherBid,'heigher bid')
+                            firebase.database().ref('/Aucation/' + '/' + item.data.UID + '/' + item.key ).update(obj)
+
+                            }
+                            }else{
+
+                                var obj ={
+                                    sellTo:'no bid'
+                                }
+                            firebase.database().ref('/Aucation/' + '/' + item.data.UID + '/' + item.key).update(obj)
+
+                                console.log('no bid place')
+
+                            }
+                            
+                        }
+                        
                     }
 
                 })
@@ -84,19 +148,19 @@ class Home extends React.Component {
             if (liveBid.length) {
                 this.setState({ liveBid })
 
-                console.log(liveBid, '?>??live???')
+                // console.log(liveBid, '?>??live???')
             }
             if (upcoming.length) {
                 this.setState({ upcoming })
 
-                console.log(upcoming, '?>????????')
-                
+                // console.log(upcoming, '?>????????')
+
             }
-        }, 25000)
+        }, 12000)
     }
-     myStopFunction = ()=> {
+    myStopFunction = () => {
         clearTimeout(check);
-      }
+    }
     BidLive = (i) => {
         // console.log(i, "ii")
         this.props.navigation.navigate('Live', { i })
