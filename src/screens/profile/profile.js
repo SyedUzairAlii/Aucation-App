@@ -27,6 +27,7 @@ class Profile extends React.Component {
             })
     var liveBid = [];
     var upcoming = [];
+    var SoldItem = []
     // console.log(allPost ,';all post will')
     if (currentPosts) {
         currentPosts.map(item => {
@@ -41,6 +42,10 @@ class Profile extends React.Component {
                 upcoming.push(item)
                 // console.log('upcomming', item);
             }
+            else if (moment(item.data.EndTime) < moment(Date.now())) {
+                SoldItem.push(item)
+                // console.log('upcomming', item);
+            }
 
         })
     }
@@ -48,12 +53,18 @@ class Profile extends React.Component {
     if (liveBid.length) {
         this.setState({ liveBid })
 
-        console.log(liveBid, '?>??live???')
+        // console.log(liveBid, '?>??live???')
     }
     if (upcoming.length) {
         this.setState({ upcoming })
 
-        console.log(upcoming, '?>????????')
+        // console.log(upcoming, '?>????????')
+
+    }
+    if (SoldItem.length) {
+        this.setState({ SoldItem })
+
+        // console.log(upcoming, '?>????????')
 
     }
 }, 100)
@@ -89,7 +100,7 @@ class Profile extends React.Component {
     static navigationOptions = { header: null }
 
     render() {
-        const { allUser, loading, services, match, upcoming, liveBid,me } = this.state
+        const { allUser, SoldItem, services, match, upcoming, liveBid,me } = this.state
         return (
             <View styel={{ flex: 1 }}>
                 <Header

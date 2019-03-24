@@ -12,6 +12,7 @@ export function current_User(currentUser) {
         var arr = [];
         currentUserPost = [];
         allPost = [];
+        SellPost=[];
         dispatch(
             { type: actionTypes.UID, payload: UID }
         )
@@ -48,16 +49,33 @@ export function current_User(currentUser) {
                         { type: actionTypes.USERPOST, payload: currentUserPost }
                     )
                 } else {
+                    // console.log(val,'chexk')
+
+                    if(val.sold === "yes" || val.sold === "no"  ){
+                        const obj = {
+                            key: key,
+                            data: val
+                        }
+                        console.log(obj,'sell')
+
+                        SellPost.push(obj)
+                        dispatch(
+                            { type: actionTypes.SELLPOST, payload: SellPost }
+                        )
+                        // console.log(SellPost,'ss')
+                    }else{
                     // console.log(val,"action all post")
                     const obj = {
                         key: key,
                         data: val
                     }
+                    console.log(obj,'not sell')
+
                     allPost.push(obj)
                     dispatch(
                         { type: actionTypes.ALLPOST, payload: allPost }
                     )
-                }
+                }}
             }
         })
 

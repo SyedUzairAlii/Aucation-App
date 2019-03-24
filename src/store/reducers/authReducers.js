@@ -7,6 +7,7 @@ const INITIAL_STATE = {
     USERPOST: null,
     ALLPOST: null,
     FLAG: false,
+    SELLPOST:null,
 }
 
 export default (states = INITIAL_STATE, action) => {
@@ -40,6 +41,11 @@ export default (states = INITIAL_STATE, action) => {
             return ({
                 ...states,
                 FLAG: action.payload
+            })
+            case 'SELLPOST':
+            return ({
+                ...states,
+                SELLPOST: action.payload
             })
 
 

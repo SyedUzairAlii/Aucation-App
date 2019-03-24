@@ -23,10 +23,21 @@ class Home extends React.Component {
     // }
 
     componentWillReceiveProps(props) {
-        const { me, allUser, allPost, currentPosts } = props
+        const { me, allUser, allPost, currentPosts, SellPost } = props
         setTimeout(() => {
             var liveBid = [];
             var upcoming = [];
+            var SellItem
+            if (SellPost) {
+                SellItem = SellPost
+                if (SellItem.length) {
+                    console.log(SellPost, "jjj")
+                    this.setState({
+                        SellItem,
+                    })
+                }
+            }
+
             // console.log(allPost ,';all post will')
             // console.log(currentPosts ,';my post will')
             if (allPost) {
@@ -36,44 +47,11 @@ class Home extends React.Component {
                         moment(item.data.EndTime) >= moment(Date.now())) {
                         // console.log(item,'item live know')
                         liveBid.push(item)
-
                     }
                     else if (moment(item.data.StartTime) > moment(Date.now())) {
                         upcoming.push(item)
                         // console.log('upcomming', item);
-                    }else if (moment(item.data.EndTime) < moment(Date.now())) {
-                        if (!item.data.sellTo) {
-                            // console.log('is item ka winner koi ni hy ', item)
-                            if(item.data.AuctionBid){
-                                // console.log(item.data.AuctionBid,'aa')
-                                var AllBids = item.data.AuctionBid
-                                var heigherBid = AllBids.reduce(function (pre, current) {
-                                    return (pre.bid > current.bid) ? pre : current
-                                })
-                                if(heigherBid){
-                                    var obj ={
-                                        sellTo:heigherBid
-                                    }
-
-                                console.log(heigherBid,'heigher bid')
-                            firebase.database().ref('/Aucation/' + '/' + item.data.UID + '/' + item.key ).update(obj)
-
-                            }
-                            }else{
-
-                                var obj ={
-                                    sellTo:'no bid'
-                                }
-                            firebase.database().ref('/Aucation/' + '/' + item.data.UID + '/' + item.key).update(obj)
-
-                                console.log('no bid place')
-
-                            }
-                            
-                        }
                     }
-
-
                 })
             }
 
@@ -90,10 +68,16 @@ class Home extends React.Component {
             }
         }, 100)
         var check = setInterval(() => {
+            const { SellItem } = this.state
             console.log('hello')
             var liveBid = [];
             var upcoming = [];
-            
+            var SellOut =[]
+            if(SellItem){
+
+                SellOut = SellItem
+            }
+
             // console.log(allPost ,';all post will')
             // console.log(currentPosts ,';my post will')
             if (allPost) {
@@ -110,36 +94,45 @@ class Home extends React.Component {
                         // console.log('upcomming', item);{}
                     }
                     else if (moment(item.data.EndTime) < moment(Date.now())) {
-                        if (!item.data.sellTo) {
+                        if (!item.data.sold) {
                             // console.log('is item ka winner koi ni hy ', item)
-                            if(item.data.AuctionBid){
+                            if (item.data.AuctionBid) {
                                 // console.log(item.data.AuctionBid,'aa')
                                 var AllBids = item.data.AuctionBid
                                 var heigherBid = AllBids.reduce(function (pre, current) {
                                     return (pre.bid > current.bid) ? pre : current
                                 })
-                                if(heigherBid){
-                                    var obj ={
-                                        sellTo:heigherBid
+                                if (heigherBid) {
+                                    var obj = {
+                                        sellTo: heigherBid
                                     }
+                                    SellOut.push(item)
+                                    var obj2 = {
+                                        sold: 'yes'
+                                    }
+                                    console.log(heigherBid, 'heigher bid')
+                                    firebase.database().ref('/Aucation/' + '/' + item.data.UID + '/' + item.key).update(obj)
+                                    firebase.database().ref('/Aucation/' + '/' + item.data.UID + '/' + item.key).update(obj2)
 
-                                console.log(heigherBid,'heigher bid')
-                            firebase.database().ref('/Aucation/' + '/' + item.data.UID + '/' + item.key ).update(obj)
-
-                            }
-                            }else{
-
-                                var obj ={
-                                    sellTo:'no bid'
                                 }
-                            firebase.database().ref('/Aucation/' + '/' + item.data.UID + '/' + item.key).update(obj)
+                            } else {
+
+                                var obj = {
+                                    sellTo: 'no bid'
+                                }
+                                SellOut.push(item)
+                                var obj2 = {
+                                    sold: 'no'
+                                }
+                                firebase.database().ref('/Aucation/' + '/' + item.data.UID + '/' + item.key).update(obj)
+                                firebase.database().ref('/Aucation/' + '/' + item.data.UID + '/' + item.key).update(obj2)
 
                                 console.log('no bid place')
 
                             }
-                            
+
                         }
-                        
+
                     }
 
                 })
@@ -152,6 +145,12 @@ class Home extends React.Component {
             }
             if (upcoming.length) {
                 this.setState({ upcoming })
+
+                // console.log(upcoming, '?>????????')
+
+            }
+            if (SellOut) {
+                this.setState({ SellItem: SellOut })
 
                 // console.log(upcoming, '?>????????')
 
@@ -190,7 +189,7 @@ class Home extends React.Component {
     static navigationOptions = { header: null }
 
     render() {
-        const { allUser, loading, services, match, upcoming, liveBid } = this.state
+        const { allUser, loading, services, SellItem, upcoming, liveBid } = this.state
         return (
             <View styel={{ flex: 1 }}>
                 <Header
@@ -307,6 +306,52 @@ class Home extends React.Component {
 
                                 </View>
                             }
+                            {SellItem &&
+                                <View>
+                                    <Text style={{ alignItems: 'center', fontSize: 25, fontWeight: "bold", color: '#075e54', paddingLeft: 20 }}>Complite Auction's</Text>
+                                    <ScrollView horizontal={true}>
+                                        {SellItem &&
+                                            SellItem.map((i) => {
+                                                // console.log(i, "><><><<>")
+                                                return (
+                                                    <View key={i.key} style={{ flexDirection: "row" }} >
+                                                        <LinearGradient
+                                                            colors={['#25d366', 'transparent']}
+                                                            style={{
+                                                                position: 'absolute',
+                                                                left: 0,
+                                                                right: 0,
+                                                                top: 0,
+                                                                height: 300,
+                                                            }}
+                                                        />
+                                                        <View style={{ height: 350, width: 200, borderWidth: 2, flex: 1, margin: 10, borderRadius: 10, borderColor: '#34b7f1' }}>
+                                                            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                                                                <Text style={styles.titleName}>{i.data.name}</Text>
+                                                            </View>
+                                                            <View style={{ borderRadius: 5, overflow: 'hidden', height: 200, }}>
+                                                                <Image style={styles.img} source={{ uri: i.data.image }} />
+                                                            </View>
+                                                            <TouchableOpacity onPress={() => this.BidAdv(i)}>
+                                                                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                                                                    <Text style={{ fontSize: 16, color: '#3498db', paddingBottom: 8, paddingTop: 3 }}>{`Starting BID ${i.data.Bid} PKR`}</Text>
+                                                                </View>
+                                                                {/* <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                                                                    <Text style={styles.cardTitle}>{moment(new Date(i.data.StartTime)).fromNow()}</Text>
+                                                                </View> */}
+                                                            </TouchableOpacity>
+                                                        </View>
+                                                    </View>
+                                                )
+                                            })
+                                        }
+
+                                    </ScrollView>
+
+
+                                </View>
+
+                            }
 
                         </View>
 
@@ -353,7 +398,9 @@ function mapStateToProp(state) {
         me: state.authReducers.USER,
         allUser: state.authReducers.ALLUSER,
         allPost: state.authReducers.ALLPOST,
-        currentPosts: state.authReducers.USERPOST
+        currentPosts: state.authReducers.USERPOST,
+        SellPost: state.authReducers.SELLPOST
+
     })
 }
 function mapDispatchToProp(dispatch) {

@@ -4,7 +4,8 @@ const actionTypes = {
     ALLUSER: 'ALLUSER',
     FLAG:'FLAG',
     USERPOST:'USERPOST',
-    ALLPOST:'ALLPOST'
+    ALLPOST:'ALLPOST',
+    SELLPOST:'SELLPOST'
 }
 
 export default actionTypes;
